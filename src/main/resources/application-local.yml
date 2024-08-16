@@ -1,0 +1,23 @@
+
+spring:
+  h2:
+    console.enabled: true
+  application:
+    name: food-dairy
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: ''
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+bot:
+  name: ${BOT_NAME:kamae_test_bot}
+  token: ${BOT_TOKEN:7262535656:AAGR1DnFLtQ6lm87sUbyRRjntkuCeaRcnTw}
+logging:
+  level:
+    root: debug
+server:
+  port: 8085
