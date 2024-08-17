@@ -15,11 +15,15 @@ interface ChatService {
 
     fun initChat(id: Long)
 
-    fun getChat(id: Long): Chat
+    fun getChat(id: Long): Chat?
 
-    fun getUser(id: String): User
+    fun getUser(id: String): User?
+
+    fun saveUser(user: User): User
 
     fun setState(chatId: Long, chatState: ChatState)
+
+    fun createGroup(chatId: Long, bot: TelegramLongPollingBot)
 }
 
 @Service
@@ -33,10 +37,6 @@ class ChatServiceImpl(
         var message = "Привет, $name, ты успешно зарегистрирован в системе!"
         MessageUtils.sendSimpleMessage(chatId, message, bot)
 
-        message = "Введи название своей первой группы"
-        chatRepository.updateChatState(chatId, ChatState.WAIT_GROUP_NAME.name)
-        MessageUtils.sendSimpleMessage(chatId, message, bot)
-
         //chatRepository.updateChatState(chatId, ChatState.WAIT_COMMAND.name)
 
         //val commands = listOf(Command.ADD_FOOD_TEXT, Command.ADD_FOOD_SELECT)
@@ -44,16 +44,25 @@ class ChatServiceImpl(
         //MessageUtils.sendButtonsMessage(chatId, message, commands, bot)
     }
 
+
     override fun initChat(id: Long) {
         chatRepository.save(Chat(id, ChatState.WAIT_NAME.name))
     }
 
-    override fun getChat(id: Long): Chat = chatRepository.getChatById(id) ?: error("")
+    override fun getChat(id: Long): Chat? = chatRepository.getChatById(id)
 
-    override fun getUser(id: String): User = userRepository.findUserById(id)
+    override fun getUser(id: String): User? = userRepository.findUserById(id)
+    override fun saveUser(user: User): User = userRepository.save(user)
+
 
     override fun setState(chatId: Long, chatState: ChatState) {
         chatRepository.updateChatState(chatId, chatState.name)
+    }
+
+    override fun createGroup(chatId: Long, bot: TelegramLongPollingBot) {
+        val message = "Введи название своей первой группы"
+        chatRepository.updateChatState(chatId, ChatState.WAIT_GROUP_NAME.name)
+        MessageUtils.sendSimpleMessage(chatId, message, bot)
     }
 
 }

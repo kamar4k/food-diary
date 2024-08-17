@@ -1,5 +1,6 @@
 package org.kamae.fooddairy.bot.service
 
+import org.kamae.fooddairy.bot.aspect.annotation.BotAuthentication
 import org.kamae.fooddairy.bot.fw.MessageUtils
 import org.kamae.fooddairy.enums.ChatState
 import org.springframework.stereotype.Service
@@ -11,6 +12,8 @@ interface PurchaseBotService {
     fun sendInputFoodMessage(chatId: Long, bot: TelegramLongPollingBot)
 
     fun sendGroupCreatedMessage(chatId: Long, bot: TelegramLongPollingBot)
+
+    fun sendCreateGroupMessage(chatId: Long, bot: TelegramLongPollingBot)
 }
 
 @Service
@@ -38,6 +41,10 @@ class PurchaseBotServiceImpl(
         val message = "Группа успешно зарегистрирована"
 
         MessageUtils.sendSimpleMessage(chatId, message, bot)
+    }
+
+    override fun sendCreateGroupMessage(chatId: Long, bot: TelegramLongPollingBot) {
+        chatService.createGroup(chatId, bot)
     }
 
 }

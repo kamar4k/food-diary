@@ -10,7 +10,7 @@ open class User(
         val name: String,
         val chatId: Long,
         @ManyToMany(targetEntity = Group::class)
-        val group: Set<Group>?
+        val groups: Set<Group>?
 ) {
         @OneToOne
         var usedGroup: Group? = null

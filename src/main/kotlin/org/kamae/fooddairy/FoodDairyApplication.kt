@@ -5,10 +5,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.EnableAspectJAutoProxy
 
 @SpringBootApplication
 @EnableConfigurationProperties(PurchaseBotConfiguration::class)
-@ComponentScan(basePackages = arrayOf("org.kamae"))
+@ComponentScan(basePackages = ["org.kamae"])
 class FoodDairyApplication
 
 fun main(args: Array<String>) {

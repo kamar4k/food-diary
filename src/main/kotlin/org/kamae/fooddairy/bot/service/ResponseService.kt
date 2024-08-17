@@ -25,7 +25,7 @@ class ResponseServiceImpl(
         val chatId = update.message.chatId
 
         val message = update.message.text
-        val chatState = chatService.getChat(chatId).state
+        val chatState = chatService.getChat(chatId)?.state
 
         var user: User? = null
         if (chatState != ChatState.WAIT_NAME.name) {
