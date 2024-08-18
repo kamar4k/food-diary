@@ -9,7 +9,7 @@ open class User(
         val id: String,
         val name: String,
         val chatId: Long,
-        @ManyToMany(targetEntity = Group::class)
+        @ManyToMany(targetEntity = Group::class, fetch = FetchType.EAGER)
         val groups: Set<Group>?
 ) {
         @OneToOne

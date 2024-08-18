@@ -2,7 +2,6 @@ package org.kamae.fooddairy.service
 
 import jakarta.transaction.Transactional
 import org.kamae.fooddairy.entity.Group
-import org.kamae.fooddairy.entity.Position
 import org.kamae.fooddairy.entity.User
 import org.springframework.stereotype.Service
 

@@ -37,6 +37,7 @@ class ChatServiceImpl(
         var message = "Привет, $name, ты успешно зарегистрирован в системе!"
         MessageUtils.sendSimpleMessage(chatId, message, bot)
 
+        chatRepository.updateChatState(chatId, ChatState.WAIT_COMMAND.name)
         //chatRepository.updateChatState(chatId, ChatState.WAIT_COMMAND.name)
 
         //val commands = listOf(Command.ADD_FOOD_TEXT, Command.ADD_FOOD_SELECT)
@@ -60,7 +61,7 @@ class ChatServiceImpl(
     }
 
     override fun createGroup(chatId: Long, bot: TelegramLongPollingBot) {
-        val message = "Введи название своей первой группы"
+        val message = "У тебя нет ни одной группы. Введи название своей новой группы"
         chatRepository.updateChatState(chatId, ChatState.WAIT_GROUP_NAME.name)
         MessageUtils.sendSimpleMessage(chatId, message, bot)
     }

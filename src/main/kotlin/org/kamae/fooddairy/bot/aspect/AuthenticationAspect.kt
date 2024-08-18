@@ -1,5 +1,6 @@
 package org.kamae.fooddairy.bot.aspect
 
+import jakarta.transaction.Transactional
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
@@ -22,6 +23,7 @@ class AuthenticationAspect(
 
     //    @Around("@annotation(org.kamae.fooddairy.bot.aspect.annotation.BotAuthentication)")
     @Around("execution(* org.kamae.fooddairy.bot.service.BotAdapterImpl.processUpdate(..)) && args(update, bot, user))")
+    @Transactional
     fun processAuthentication(pjp: ProceedingJoinPoint, update: Update?, bot: TelegramLongPollingBot, user: User?) {
         var userName = ""
         var chatId = 0L
@@ -34,22 +36,27 @@ class AuthenticationAspect(
         }
         var newUser: User? = null
 
-        if (chatService.getChat(chatId)?.state != ChatState.WAIT_NAME.name &&
-            update?.message?.text != "/start"
-        ) {
-            newUser = chatService.getUser(userName) ?: throw UserNotFoundException(userName)
-        }
-        if (newUser?.usedGroup == null) {
-            if (newUser?.groups?.isNotEmpty() == true) {
-                newUser.usedGroup = newUser!!.groups!!.first()
-                chatService.saveUser(newUser)
-            } else {
-                throw GroupsNotFoundException(newUser?.id ?: "")
+        if (update?.message?.text == "/start") {
+            pjp.proceed()
+            return
+        } else {
+            if (chatService.getChat(chatId)?.state != ChatState.WAIT_NAME.name) {
+                newUser = chatService.getUser(userName) ?: throw UserNotFoundException(userName)
+
+                if (newUser.usedGroup == null && chatService.getChat(chatId)?.state != ChatState.WAIT_GROUP_NAME.name) {
+                    if (newUser.groups?.isNotEmpty() == true) {
+                        newUser.usedGroup = newUser.groups!!.first()
+                        chatService.saveUser(newUser)
+                    } else {
+                        throw GroupsNotFoundException(newUser.id)
+                    }
+                }
             }
         }
-//TODO разнести по разным методам
+        //TODO разнести по разным методам
         pjp.proceed(arrayOf(update, bot, newUser))
     }
+
 
     companion object {
         val logger: Logger = LoggerFactory.getLogger(AuthenticationAspect::class.java)
